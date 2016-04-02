@@ -1,0 +1,64 @@
+1. Add deploy user
+  sudo adduser deploy
+  sudo adduser deploy sudo
+  su deploy
+
+2. set SSH to authenticate via keys
+  ssh-copy-id username@ipaddress
+
+3. remove locale warning
+  vim /etc/default/locale
+  LANGUAGE=en_US.UTF-8
+  LC_ALL=en_US.UTF-8
+  LANG=en_US.UTF-8
+  LC_TYPE=en_US.UTF-8
+
+  locale-gen en_US.UTF-8
+  dpkg-reconfigure locales
+
+5. Installing Ruby
+  sudo apt-get update
+  sudo apt-get install git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+
+  cd
+  git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+  echo 'eval "$(rbenv init -)"' >> ~/.bashrc
+  exec $SHELL
+  git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+  echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+  exec $SHELL
+
+  git clone https://github.com/rbenv/rbenv-gem-rehash.git ~/.rbenv/plugins/rbenv-gem-rehash
+
+  rbenv install 2.2.4
+  rbenv global 2.2.4
+  ruby -v
+6. install bundler 
+  gem install bundler
+7. install nodejs
+  curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+8. install and setup nginx passanger
+  sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+  sudo apt-get install -y apt-transport-https ca-certificates
+
+  sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+  sudo apt-get install -y apt-transport-https ca-certificates
+
+  # Add Passenger APT repository
+  sudo sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger trusty main > /etc/apt/sources.list.d/passenger.list'
+  sudo apt-get update
+  
+  # Install Passenger & Nginx
+  sudo apt-get install -y nginx-extras passenger
+  sudo vim /etc/nginx/nginx.conf
+  passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
+
+  passenger_ruby /home/deploy/.rbenv/shims/ruby; # If you use rbenv
+  sudo service nginx restart
+9. Installing PostgreSQL
+  sudo apt-get install postgresql postgresql-contrib libpq-dev
+  sudo su - postgres
+  createuser --pwprompt
+  exit
